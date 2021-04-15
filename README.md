@@ -1,4 +1,4 @@
-# Simple Tag Preprocessor
+# Simple Tag Preprocessor ![Build](https://github.com/PearCoding/stpp/actions/workflows/cmake.yml/badge.svg)
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/PearCoding/stpp/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/PearCoding/hwinfo.svg)](https://github.com/PearCoding/stpp/issues)
