@@ -1,0 +1,17 @@
+This is a good test...
+#if NOOO
+Not included here!!
+#elif NEITHER_THAT
+#else
+But that!
+#define MAYBE
+#endif
+Line 1
+#if MAYBE
+Something
+#undef MAYBE
+#endif
+#if MAYBE
+Something2
+#endif
+Heehehe
