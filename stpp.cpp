@@ -123,7 +123,7 @@ enum class Operation {
     Undef,
     Unknown
 };
-Operation extract_operation(std::istream& in)
+Operation extract_operation(std::istream& in, const char*& name)
 {
     constexpr size_t MAX_BUF_SIZE = 16;
     static char buffer[MAX_BUF_SIZE + 1];
@@ -143,6 +143,7 @@ Operation extract_operation(std::istream& in)
     }
 
     buffer[counter] = 0;
+    name            = buffer;
 
     if (strcmp("if", buffer) == 0)
         return Operation::If;
@@ -157,7 +158,8 @@ Operation extract_operation(std::istream& in)
     else if (strcmp("undef", buffer) == 0)
         return Operation::Undef;
     else {
-        std::cerr << "Got unknown operation " << buffer << std::endl;
+        // Silently ignore
+        //std::cerr << "Got unknown operation " << buffer << std::endl;
         return Operation::Unknown;
     }
 }
@@ -182,7 +184,8 @@ bool consume(std::istream& in, std::ostream& out, Context& context, bool ignore)
     char c;
     while (in.get(c)) {
         if (c == PP_START) {
-            const Operation op = extract_operation(in);
+            const char* name;
+            const Operation op = extract_operation(in, name);
             switch (op) {
             case Operation::If:
                 if (!handle_if(in, out, context, ignore))
@@ -198,7 +201,10 @@ bool consume(std::istream& in, std::ostream& out, Context& context, bool ignore)
                 break;
             default:
             case Operation::Unknown:
-                return false;
+                if (!ignore) {
+                    out.put(PP_START);
+                    out.write(name, strlen(name));// FIXME: We lose the whitespaces....
+                }
             }
         } else if (!ignore) {
             out.put(c);
@@ -212,7 +218,8 @@ bool consume_next(std::istream& in, std::ostream& out, Context& context, bool ig
     char c;
     while (in.get(c)) {
         if (c == PP_START) {
-            const Operation op = extract_operation(in);
+            const char* name;
+            const Operation op = extract_operation(in, name);
             switch (op) {
             case Operation::If:
                 if (!handle_if(in, out, context, ignore))
@@ -233,7 +240,10 @@ bool consume_next(std::istream& in, std::ostream& out, Context& context, bool ig
                 break;
             default:
             case Operation::Unknown:
-                return false;
+                if (!ignore) {
+                    out.put(PP_START);
+                    out.write(name, strlen(name));
+                }
             }
         } else if (!ignore) {
             out.put(c);
